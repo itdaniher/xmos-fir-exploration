@@ -6,7 +6,9 @@
 #include <xs1.h>
 #include "pwm_singlebit_port.h"
 
+// use XTAG2 pins 3 and 5 as 1b wide outputs with a 32b buffer
 out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A}; 
+
 clock clk = XS1_CLKBLK_1;
 
 #define RESOLUTION 256

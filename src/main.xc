@@ -31,7 +31,7 @@ void client(chanend c) {
 
     while (1) {
         t when timerafter (time) :> void;
-        updateValues(values, direction);
+        updateValues(values);
         pwmSingleBitPortSetDutyCycle(c, values, NUM_PORTS);
         time += PERIOD;
     }

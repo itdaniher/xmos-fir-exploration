@@ -1,27 +1,34 @@
-PWM Single Bit Component API
-++++++++++++++++++++++++++++  
-
 The component will run in a par with the following function which does not terminate.
 
-void pwmSingleBitPort(chanend c, clock clk,
-                      out buffered port:32 p[], 
-                      unsigned int numPorts, 
-                      unsigned int resolution, 
-                      unsigned int timeStep
-                      unsigned int mod_type);
+<code>
+    void pwmSingleBitPort(chanend c, clock clk,
+                          out buffered port:32 p[], 
+                          unsigned int numPorts, 
+                          unsigned int resolution, 
+                          unsigned int timeStep
+                          unsigned int mod_type);
+</code>
 
-This function starts the pwm server and passes it a channel with 
-which it will communicate with the client, a clock block required for the clocking of the required ports, an array of ports on which the pwm signals will be generated, and the number of ports in the array. 
+This function starts the pwm server and passes it a channel with which it will communicate with the client, a clock block required for the clocking of the required ports, an array of ports on which the pwm signals will be generated, and the number of ports in the array. 
+
 
 The resolution specifes the number of levels permitted in the pwm, thus a resolution  of 100 will provide 100 distinct levels, and a resolution of 1024 will provide 1024 distinct levels (i.e. equivilent to 10-bits resolution). Also, the resolution must be a multiple of 32.  
 
+
 The timestep configures how long each level lasts for.  For example: 0 -> 10ns, 1 -> 20ns, 2 -> 40ns, 3 -> 60ns, 4 -> 80ns, etc, up to a maximum of 256.  Therefore, the resulting period of the pwm (in ns) is given by the following expression: 
 
-(10 * resolution) [if timestep = 0] or (timestep * 20 * resolution) [if timestep > 0]
+<code>
+    (10 * resolution) [if timestep = 0] or (timestep * 20 * resolution) [if timestep > 0]
+</code>
 
 The mod_type configures the PWM edge variations
 1 --> Lead Edge, 2 -- > Tail Edge, 3 --> Centred variations
 
-void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int numPorts);
+
+-----
+
+<code>
+    void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int numPorts);
+</code>
 
 The client uses this function to give the pwm server a new set of duty cycles, one for  each of the ports in use. The server will then continue to output at that value until this function is called again.

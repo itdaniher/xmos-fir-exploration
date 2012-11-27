@@ -3,15 +3,10 @@ The component will run in a par with the following function which does not termi
 <code>
 
     void pwmSingleBitPort(chanend c, clock clk,
-
                           out buffered port:32 p[], 
-
                           unsigned int numPorts, 
-
                           unsigned int resolution, 
-
                           unsigned int timeStep
-
                           unsigned int mod_type);
 
 </code>

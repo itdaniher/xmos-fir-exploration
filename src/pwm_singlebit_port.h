@@ -28,4 +28,3 @@ void pwmSingleBitPortSetDutyCycle(
     unsigned int numPorts);
 
 #endif /* PWM_H_ */
-

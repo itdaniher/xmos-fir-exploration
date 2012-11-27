@@ -6,7 +6,7 @@
 #include <xs1.h>
 #include "pwm_singlebit_port.h"
 
-out buffered port:1 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A}; 
+out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A}; 
 clock clk = XS1_CLKBLK_1;
 
 #define RESOLUTION 256

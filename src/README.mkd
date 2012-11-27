@@ -1,12 +1,19 @@
 The component will run in a par with the following function which does not terminate.
 
 <code>
+
     void pwmSingleBitPort(chanend c, clock clk,
+
                           out buffered port:32 p[], 
+
                           unsigned int numPorts, 
+
                           unsigned int resolution, 
+
                           unsigned int timeStep
+
                           unsigned int mod_type);
+
 </code>
 
 This function starts the pwm server and passes it a channel with which it will communicate with the client, a clock block required for the clocking of the required ports, an array of ports on which the pwm signals will be generated, and the number of ports in the array. 

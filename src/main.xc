@@ -14,29 +14,9 @@ clock clk = XS1_CLKBLK_1;
 #define NUM_PORTS 2
 #define TIMESTEP 100
 
-enum { COUNTUP, COUNTDOWN };
-
-void updateValues(unsigned int values[], unsigned int direction[]) {
+void updateValues(unsigned int values[]) {
 	for (unsigned int i = 0; i < NUM_PORTS; ++i) {
-		switch (direction[i]) {
-		case COUNTUP:
-			if (values[i] == RESOLUTION) {
-				direction[i] = COUNTDOWN;
-				--values[i];
-			} else {
-				++values[i];
-			}
-			break;
-
-		case COUNTDOWN:
-			if (values[i] == 0) {
-				direction[i] = COUNTUP;
-				++values[i];
-			} else {
-				--values[i];
-			}
-			break;
-		}
+		values[i] = (values[i]+i+1) % RESOLUTION;
 	}
 }
 
@@ -44,8 +24,7 @@ void client(chanend c) {
     timer t;
     int time;
 
-    unsigned int values[NUM_PORTS] = {0, RESOLUTION};
-    unsigned int direction[NUM_PORTS] = {COUNTUP, COUNTDOWN};
+    unsigned int values[NUM_PORTS] = {0, 0};
 
     t :> time;
     time += PERIOD;
@@ -63,7 +42,7 @@ int main() {
 
     par {
         client(c);
-        pwmSingleBitPort(c, clk, rgPorts, NUM_PORTS, RESOLUTION, TIMESTEP,1);
+        pwmSingleBitPort(c, clk, rgPorts, NUM_PORTS, RESOLUTION, TIMESTEP, 1);
     }
     return 0;
 }

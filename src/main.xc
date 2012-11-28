@@ -12,12 +12,13 @@ out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A};
 clock clk = XS1_CLKBLK_1;
 
 #define RESOLUTION 256
-#define PERIOD (RESOLUTION*200)
+#define PERIOD RESOLUTION*20*TIMESTEP
 #define NUM_PORTS 2
 #define TIMESTEP 100
 
 void updateValues(unsigned int values[]) {
 	for (unsigned int i = 0; i < NUM_PORTS; ++i) {
+		// increment values[0] by 1, values[1] by 2, modulo the resolution
 		values[i] = (values[i]+i+1) % RESOLUTION;
 	}
 }

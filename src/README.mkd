@@ -14,14 +14,13 @@ The component will run in a par with the following function which does not termi
 This function starts the pwm server and passes it a channel with which it will communicate with the client, a clock block required for the clocking of the required ports, an array of ports on which the pwm signals will be generated, and the number of ports in the array. 
 
 
-The resolution specifes the number of levels permitted in the pwm, thus a resolution  of 100 will provide 100 distinct levels, and a resolution of 1024 will provide 1024 distinct levels (i.e. equivilent to 10-bits resolution). Also, the resolution must be a multiple of 32.  
+The resolution specifes the number of levels permitted in the pwm, thus a resolution of 64 will provide 64 distinct levels, and a resolution of 1024 will provide 1024 distinct levels (i.e. equivalent to 10-bits resolution).
 
+The value "timestep" configures the duration of each pwm bit. A timestep of zero causes 1 LSB to take 10ns. A timestep of 1 causes 1 LSB to take 20ns. A timestep of 2 causes 1 LSB to take 40ns, etc. up to a maximum value of 256.
 
-The timestep configures how long each level lasts for.  For example: 0 -> 10ns, 1 -> 20ns, 2 -> 40ns, 3 -> 60ns, 4 -> 80ns, etc, up to a maximum of 256.  Therefore, the resulting period of the pwm (in ns) is given by the following expression: 
+For timesteps above 0, the period can be calculated as follows:
 
-<code>
-    (10 * resolution) [if timestep = 0] or (timestep * 20 * resolution) [if timestep > 0]
-</code>
+period = 20*timeStep*resolution
 
 The mod_type configures the PWM edge variations
 1 --> Lead Edge, 2 -- > Tail Edge, 3 --> Centred variations

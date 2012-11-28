@@ -12,7 +12,8 @@ out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A};
 clock clk = XS1_CLKBLK_1;
 
 #define RESOLUTION 256
-#define PERIOD RESOLUTION*20*TIMESTEP
+#define PERIOD RESOLUTION*2*TIMESTEP
+#define PERIOD_NS PERIOD*10
 #define NUM_PORTS 2
 #define TIMESTEP 100
 

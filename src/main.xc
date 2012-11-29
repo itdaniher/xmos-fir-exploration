@@ -6,15 +6,15 @@
 #include <xs1.h>
 #include "pwm_singlebit_port.h"
 
-// use XTAG2 pins 3 and 5 as 1b wide outputs with a 32b buffer
-out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A}; 
+// use XTAG2 pins 3 and 5 and 7 as 1b wide outputs with a 32b buffer
+out buffered port:32 rgPorts[] = {XS1_PORT_1L, XS1_PORT_1A, XS1_PORT_1C}; 
 
 clock clk = XS1_CLKBLK_1;
 
-#define RESOLUTION 256
+#define RESOLUTION 1024
 #define PERIOD RESOLUTION*2*TIMESTEP
 #define PERIOD_NS PERIOD*10
-#define NUM_PORTS 2
+#define NUM_PORTS 3
 #define TIMESTEP 100
 
 void updateValues(unsigned int values[]) {

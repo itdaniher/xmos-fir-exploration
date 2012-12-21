@@ -7,7 +7,12 @@
 #include <xs1.h>
 #include "fir.h"
 
-int fir_SingleThread(streaming chanend c,int h[],int x[], unsigned ntaps){
+// streaming chanend c gets 8.24 fixed-point numbers
+// h is an array of coefficients, populated by the first 'ntaps' words from c
+// x is an array, initialized to all zeroes, that acts as the operational buffer
+// ntaps is an unsigned integer representing the number of taps
+// shove a 32b number down chanend c, get a filtered 32b number out that's delayed by ntaps samples
+int fir_SingleThread(streaming chanend c, int h[], int x[], unsigned ntaps){
 	for(int i=0;i<ntaps;i++){
 		c:>h[i];
 		x[i]=0;
@@ -25,7 +30,6 @@ void disconnect(streaming chanend c[], unsigned size) {
         schkct(c[i], XS1_CT_END);
     }
 }
-
 
 int test_performance(streaming chanend c,int ELEMENTS){
 	timer t;

@@ -9,7 +9,7 @@ def getWaveAsArray(file):
 	wav = wave.open(file)
 	samples = [wav.readframes(1) for i in range(wav.getnframes())]
 	samples = [ord(sample[1]) << 8 | ord(sample[0]) for sample in samples]
-	return numpy.array(samples, "int16"), wav.getframerate()
+	return numpy.array(samples, "int32"), wav.getframerate()
 	
 def fir824(samples, coeffs, ntaps):
 	outSamples = numpy.array([], "int32")
@@ -25,7 +25,7 @@ def fir824(samples, coeffs, ntaps):
 def play32bArray(data):
 	_chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
 	device = alsaaudio.PCM()
-	device.setformat(alsaaudio.PCM_FORMAT_S16_LE) 
+	device.setformat(alsaaudio.PCM_FORMAT_S32_LE) 
 	device.setchannels(1)
 	device.setrate(frameRate)
 
@@ -35,6 +35,8 @@ def play32bArray(data):
 
 audioArray, frameRate = getWaveAsArray(open("noTree.wav"))
 
+audioArray <<= 16
+
 play32bArray(audioArray)
 
 ntaps = 256
@@ -42,7 +44,5 @@ ntaps = 256
 coeffs = fir_coef.filter('low', 500, 0, frameRate, 'hamming', ntaps)[0]
 
 filtered = fir824(audioArray, coeffs, ntaps)
-
-#filtered >>= 24
 
 play32bArray(filtered)

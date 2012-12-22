@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import wave
 import collections
 import numpy
@@ -18,8 +20,12 @@ def fir824(samples, coeffs, ntaps):
 	operationalBuffer = collections.deque([0]*ntaps, ntaps)
 	for sample in samples:
 		operationalBuffer.appendleft(sample)
-		arrayFIFO = numpy.array(operationalBuffer, "int32")
+		# create an array of 64b numbers from our operational queue for storage of the results of a 32*32 multiplication
+		arrayFIFO = numpy.array(operationalBuffer, "int64")
+		# multiply by our 8.24 coefficients
 		arrayFIFO *= coeffs
+		# shift by 25 to normalize back to 32b integers
+		arrayFIFO >>= 25
 		outSamples.append(sum(arrayFIFO))
 	return outSamples
 
@@ -45,13 +51,17 @@ audioArray <<= 16
 # play the unmessedup array
 play32bArray(audioArray)
 
+# reasonable number of taps
 ntaps = 255
 
 # generate coefficients using fir_coef code by Diana
-coeffs = fir_coef.filter('low', 500, 0, frameRate, 'hamming', ntaps)[1]
+coeffs = fir_coef.filter('high', 2000, 0, frameRate, 'hamming', ntaps)[0]
+
+coeffs = numpy.array(coeffs, "int32")
 
 # uncomment below line for convolving-with-impulse
-#coeffs = [1]+[0]*(ntaps-1)
+# 1 << 25 is the 8.24 representation of '1'
+#coeffs = [1<<25]+[0]*(ntaps-1)
 
 # process audioArray, store it as 'filtered'
 filtered = fir824(audioArray, coeffs, ntaps)

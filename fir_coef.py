@@ -142,5 +142,3 @@ def filter(filterType, freq1, freq2, fs, win, N):
 
 		omega = omega*factor
 	return [fixed, floating, frequency, magnitude, dB]
-	
-print filter('low', 100, 0, 44.1e3, 'hamming', 1023)[0]

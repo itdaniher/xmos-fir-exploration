@@ -48,7 +48,7 @@ play32bArray(audioArray)
 ntaps = 255
 
 # generate coefficients using fir_coef code by Diana
-coeffs = fir_coef.filter('low', 500, 0, frameRate, 'hamming', ntaps)[0]
+coeffs = fir_coef.filter('low', 500, 0, frameRate, 'hamming', ntaps)[1]
 
 # uncomment below line for convolving-with-impulse
 #coeffs = [1]+[0]*(ntaps-1)

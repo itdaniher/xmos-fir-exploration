@@ -48,23 +48,26 @@ audioArray, frameRate = getWaveAsArray(open("noTree.wav"))
 # shift 16b audio to play nicely with 32b out
 audioArray <<= 16
 
+print "playing unmodified audio"
+
 # play the unmessedup array
 play32bArray(audioArray)
 
 # reasonable number of taps
 ntaps = 255
 
+print "generating coefficients"
 # generate coefficients using fir_coef code by Diana
-coeffs = fir_coef.filter('high', 2000, 0, frameRate, 'hamming', ntaps)[0]
-
-coeffs = numpy.array(coeffs, "int32")
+coeffs = fir_coef.filter('high', 2000, 0, frameRate, 'hamming', ntaps)
 
 # uncomment below line for convolving-with-impulse
 # 1 << 25 is the 8.24 representation of '1'
 #coeffs = [1<<25]+[0]*(ntaps-1)
 
+print "filtering"
 # process audioArray, store it as 'filtered'
 filtered = fir824(audioArray, coeffs, ntaps)
 
+print "playing filtered audio"
 # play filtered audio
 play32bArray(filtered)

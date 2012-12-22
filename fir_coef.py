@@ -5,6 +5,7 @@
 # released under beerware license
 
 import math
+import numpy
 
 def windowValue(window, n, N):
 	if window == 'hann':
@@ -72,8 +73,6 @@ fs is the sample frequency
 def filter(filterType, freq1, freq2, fs, win, N):
 	c = []
 
-	# here is where file support could be.
-
 	freq1 = freq1/float(fs)
 	freq2 = freq2/float(fs)
 
@@ -117,10 +116,12 @@ def filter(filterType, freq1, freq2, fs, win, N):
 		print "more taps?"
 	
 	fixed = []
-	floating = []
+
+	floating = numpy.array(c, "float64")
+	
 	for i in range(N):
 		fixed.append(int(math.floor(c[i]*(1<<24) + 0.5)))
-		floating.append(c[i])
+	fixed = numpy.array(fixed, "int32")
 
 	factor = math.sqrt(math.sqrt(math.sqrt(math.sqrt(math.sqrt(2.0)))))
 	omega = 50
@@ -141,4 +142,4 @@ def filter(filterType, freq1, freq2, fs, win, N):
 		dB.append(20*math.log10(mag)) #accurate to 3 places
 
 		omega = omega*factor
-	return [fixed, floating, frequency, magnitude, dB]
+	return fixed #[fixed, floating, frequency, magnitude, dB]

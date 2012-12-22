@@ -7,14 +7,10 @@ import alsaaudio
 
 def getWaveAsArray(file):
 	wav = wave.open(file)
-	samples = [wav.readframes(wav.getsampwidth()) for i in range(wav.getnframes())]
-	samples = map(ord, samples)
-	return numpy.array(samples, "int32"), wav.getframerate()
+	samples = [wav.readframes(1) for i in range(wav.getnframes())]
+	samples = [ord(sample[1]) << 8 | ord(sample[0]) for sample in samples]
+	return numpy.array(samples, "int16"), wav.getframerate()
 	
-audioArray, frameRate = getWaveAsArray(open("noTree.wav"))
-
-audioArray <<= 24
-
 def fir824(samples, coeffs, ntaps):
 	outSamples = numpy.array([], "int32")
 	operationalBuffer = collections.deque([0]*ntaps, ntaps)
@@ -25,20 +21,28 @@ def fir824(samples, coeffs, ntaps):
 		numpy.append(outSamples, sum(arrayFIFO))
 	return outSamples
 
+
+def play32bArray(data):
+	_chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
+	device = alsaaudio.PCM()
+	device.setformat(alsaaudio.PCM_FORMAT_S16_LE) 
+	device.setchannels(1)
+	device.setrate(frameRate)
+
+	device.setperiodsize(320) 
+	for dataGroup in _chunk(data, 320):
+		device.write(dataGroup)
+
+audioArray, frameRate = getWaveAsArray(open("noTree.wav"))
+
+play32bArray(audioArray)
+
 ntaps = 256
 
 coeffs = fir_coef.filter('low', 500, 0, frameRate, 'hamming', ntaps)[0]
 
 filtered = fir824(audioArray, coeffs, ntaps)
 
-device = alsaaudio.PCM()
-device.setformat(alsaaudio.PCM_FORMAT_S32_LE) 
-device.setchannels(1)
-device.setrate(frameRate)
+#filtered >>= 24
 
-device.setperiodsize(320) 
-
-_chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
-
-for data in _chunk(filtered, 320):
-	device.write(data)
+play32bArray(filtered)

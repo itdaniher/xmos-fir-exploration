@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import wave
-import collections
 import numpy
 import fir_coef
 
@@ -17,9 +16,10 @@ def getWaveAsArray(file):
 # execute a FIR filter with ntaps	
 def fir824(samples, coeffs, ntaps):
 	outSamples = []
-	operationalBuffer = collections.deque([0]*ntaps, ntaps)
+	operationalBuffer = numpy.zeros(ntaps, "int32")
 	for sample in samples:
-		operationalBuffer.appendleft(sample)
+		operationalBuffer = numpy.insert(operationalBuffer, 0, sample)
+		operationalBuffer = numpy.delete(operationalBuffer, -1)
 		# create an array of 64b numbers from our operational queue for storage of the results of a 32*32 multiplication
 		arrayFIFO = numpy.array(operationalBuffer, "int64")
 		# multiply by our 8.24 coefficients

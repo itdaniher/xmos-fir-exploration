@@ -4,6 +4,8 @@
 # based on code by XMOS Ltd.
 # released under beerware license
 
+# classic windowed sinc filter coefficient generator
+
 import math
 import numpy
 
@@ -33,8 +35,6 @@ def sinc(x, fc):
 def lp(fc, w, n, N):
 	s = sinc(n-(N>>1), fc)
 	wi = windowValue(w, n, N)
-	
-
 	return s*wi
 
 def hp(fc, w, n, N):

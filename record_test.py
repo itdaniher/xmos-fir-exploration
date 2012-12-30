@@ -27,7 +27,7 @@ def recordAudio(wav = wave.open(open("out.wav", "wb")), rate = 44100, totalTime 
 	wav.setsampwidth(2)
 	wav.setframerate(rate)
 
-	for i in range(totalTime*samplesPerPeriod):
+	for i in range(rate*totalTime/samplesPerPeriod):
 		# Read data from device
 		l, data = inp.read()
 		# build list of properly signed numbers from data buffer 

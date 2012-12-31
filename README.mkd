@@ -1,0 +1,13 @@
+demo howto:
+
+* run 'python record_test.py' to record from your microphone and create 'out.wav,' a 16b / signed wave file at 44100 samples per second
+* run 'python fir_filter.py' to calculate a windowed sinc lowpass filter, use numpy's fast fortran convolution, and play the resulting stream via speakers
+
+dependencies:
+
+* run 'sudo pip install pyalsaaudio' to get the python soundcard bindings for ALSA, the audio linux subsystem
+* run 'sudo pip install numpy' to install the numerical python toolkit
+
+experimental hardware implementation:
+
+* with xmos's XDE installed, run "./load.sh" to load the experimental firmware onto XTAG2 hardware

@@ -44,7 +44,7 @@ def play32bArray(data):
 
 if __name__ == "__main__":
 	# load sample wav file
-	audioArray, frameRate = getWaveAsArray(open("noTree.wav"))
+	audioArray, frameRate = getWaveAsArray(open("out.wav"))
 	
 	# shift 16b audio to play nicely with 32b out
 	audioArray <<= 16

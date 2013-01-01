@@ -1,7 +1,6 @@
 demo howto:
 
-* run 'python record_test.py' to record from your microphone and create 'out.wav,' a 16b / signed wave file at 44100 samples per second
-* run 'python fir_filter.py' to calculate a windowed sinc lowpass filter, use numpy's fast fortran convolution, and play the resulting stream via speakers
+* run 'python fir_filter.py' to record a 10s audio clip, calculate a windowed sinc lowpass filter, use numpy's fast fortran convolution, and play the resulting stream via speakers
 
 dependencies:
 

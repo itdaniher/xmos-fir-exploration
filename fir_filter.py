@@ -4,6 +4,8 @@ import wave
 import numpy
 import fir_coef
 
+import record_test
+
 import alsaaudio
 
 # return a numpy array of 32b integers from a wavefile
@@ -14,7 +16,7 @@ def getWaveAsArray(file):
 	return numpy.array(samples, "int32"), wav.getframerate()
 
 # execute a FIR filter with ntaps	
-def fir824(samples, coeffs, ntaps):
+def simpleConvolve(samples, coeffs, ntaps):
 	outSamples = []
 	operationalBuffer = numpy.zeros(ntaps, "int32")
 	for sample in samples:
@@ -36,7 +38,7 @@ def play32bArray(data):
 	device = alsaaudio.PCM()
 	device.setformat(alsaaudio.PCM_FORMAT_S32_LE) 
 	device.setchannels(1)
-	device.setrate(frameRate)
+	device.setrate(int(frameRate))
 
 	device.setperiodsize(320) 
 	for dataGroup in _chunk(data, 320):
@@ -44,7 +46,12 @@ def play32bArray(data):
 
 if __name__ == "__main__":
 	# load sample wav file
-	audioArray, frameRate = getWaveAsArray(open("out.wav"))
+	# audioArray, frameRate = getWaveAsArray(open("out.wav"))
+
+	frameRate = 44.1e3
+	print "recording audio sample"
+	audioArray = record_test.recordAudio(None, frameRate, 10)
+	audioArray = numpy.array(audioArray, "int32")
 	
 	# shift 16b audio to play nicely with 32b out
 	audioArray <<= 16

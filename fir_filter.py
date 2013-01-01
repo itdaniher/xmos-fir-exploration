@@ -4,37 +4,37 @@ import wave
 import numpy
 import fir_coef
 
-import record_test
-
 import alsaaudio
 
-# return a numpy array of 32b integers from a wavefile
-def getWaveAsArray(file):
-	wav = wave.open(file)
-	samples = [wav.readframes(1) for i in range(wav.getnframes())]
-	samples = [ord(sample[1]) << 8 | ord(sample[0]) for sample in samples]
-	return numpy.array(samples, "int32"), wav.getframerate()
+_chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
+_unTwos = lambda x, bitlen: x-(1<<bitlen) if (x&(1<<(bitlen-1))) else x
 
-# execute a FIR filter with ntaps	
-def simpleConvolve(samples, coeffs, ntaps):
-	outSamples = []
-	operationalBuffer = numpy.zeros(ntaps, "int32")
-	for sample in samples:
-		operationalBuffer = numpy.insert(operationalBuffer, 0, sample)
-		operationalBuffer = numpy.delete(operationalBuffer, -1)
-		# create an array of 64b numbers from our operational queue for storage of the results of a 32*32 multiplication
-		arrayFIFO = numpy.array(operationalBuffer, "int64")
-		# multiply by our 8.24 coefficients
-		arrayFIFO *= coeffs
-		# shift by 25 to normalize back to 32b integers
-		arrayFIFO >>= 25
-		outSamples.append(sum(arrayFIFO))
-	return outSamples
+def recordAudio(rate = 44100, totalTime = 60):
+
+	# capture, blocking, default device
+	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, 0, 'default')
+
+	inp.setchannels(1)
+	inp.setrate(int(rate))
+	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+
+	# get 160 sample chunks in 320 bytes
+	samplesPerPeriod = 160
+
+	inp.setperiodsize(samplesPerPeriod)
+
+	samples = []
+	for i in range(int(rate*totalTime/samplesPerPeriod)):
+		# Read data from device
+		l, data = inp.read()
+		# build list of properly signed numbers from data buffer 
+		samples += [ _unTwos(ord(y) << 8 | ord(x), 16) for x, y in _chunk(data, 2) ]
+
+	return samples
 
 # play an array of 32b integers via ALSA
 def play32bArray(data):
 	data = numpy.array(data, "int32")
-	_chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
 	device = alsaaudio.PCM()
 	device.setformat(alsaaudio.PCM_FORMAT_S32_LE) 
 	device.setchannels(1)
@@ -45,12 +45,10 @@ def play32bArray(data):
 		device.write(dataGroup)
 
 if __name__ == "__main__":
-	# load sample wav file
-	# audioArray, frameRate = getWaveAsArray(open("out.wav"))
 
 	frameRate = 44.1e3
 	print "recording audio sample"
-	audioArray = record_test.recordAudio(None, frameRate, 10)
+	audioArray = recordAudio(frameRate, 10)
 	audioArray = numpy.array(audioArray, "int32")
 	
 	# shift 16b audio to play nicely with 32b out
@@ -74,7 +72,6 @@ if __name__ == "__main__":
 	
 	print "filtering"
 	# process audioArray, store it as 'filtered'
-	#filtered = fir824(audioArray, coeffs, ntaps)
 	filtered = numpy.convolve(numpy.array(audioArray, "int64"), coeffs)[0:-ntaps+1]
 	filtered >>= 25
 	print "playing filtered audio"

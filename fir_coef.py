@@ -123,7 +123,7 @@ def filter(filterType, freq1, freq2, fs, win, N):
 		fixed.append(int(math.floor(c[i]*(1<<24) + 0.5)))
 	fixed = numpy.array(fixed, "int32")
 
-	factor = math.sqrt(math.sqrt(math.sqrt(math.sqrt(math.sqrt(2.0)))))
+	factor = 2**(1./2**5)
 	omega = 50
 	frequency = []
 	magnitude = []

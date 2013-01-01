@@ -6,10 +6,7 @@ import alsaaudio
 _chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
 _unTwos = lambda x, bitlen: x-(1<<bitlen) if (x&(1<<(bitlen-1))) else x
 
-
 def recordAudio(wav = "", rate = 44100, totalTime = 60):
-
-	print wav, rate, totalTime
 
 	if wav is not None:
 		wav = wave.open(open("out.wav", "wb"))
@@ -43,4 +40,4 @@ def recordAudio(wav = "", rate = 44100, totalTime = 60):
 	return samples
 
 if __name__ == "__main__":
-	print recordAudio(wav = None, rate = 8000, totalTime = .1)
+	print recordAudio(wav = "", rate = 8000, totalTime = .1)

@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-import wave
 import numpy
-import fir_coef
-
 import alsaaudio
 
 _chunk = lambda l, x: [l[i:i+x] for i in xrange(0, len(l), x)]
@@ -33,7 +30,7 @@ def recordAudio(rate = 44100, totalTime = 60):
 	return samples
 
 # play an array of 32b integers via ALSA
-def play32bArray(data):
+def play32bArray(data, frameRate):
 	data = numpy.array(data, "int32")
 	device = alsaaudio.PCM()
 	device.setformat(alsaaudio.PCM_FORMAT_S32_LE) 
@@ -43,37 +40,3 @@ def play32bArray(data):
 	device.setperiodsize(320) 
 	for dataGroup in _chunk(data, 320):
 		device.write(dataGroup)
-
-if __name__ == "__main__":
-
-	frameRate = 44.1e3
-	print "recording audio sample"
-	audioArray = recordAudio(frameRate, 10)
-	audioArray = numpy.array(audioArray, "int32")
-	
-	# shift 16b audio to play nicely with 32b out
-	audioArray <<= 16
-	
-	print "playing unmodified audio"
-	
-	# play the unmessedup array
-	play32bArray(audioArray)
-	
-	# reasonable number of taps
-	ntaps = 255
-	
-	print "generating coefficients"
-	# generate coefficients using fir_coef code by Diana
-	coeffs = fir_coef.filter('low', 2000, 0, frameRate, 'hamming', ntaps)
-	
-	# uncomment below line for convolving-with-impulse
-	# 1 << 25 is the 8.24 representation of '1'
-	#coeffs = [1<<25]+[0]*(ntaps-1)
-	
-	print "filtering"
-	# process audioArray, store it as 'filtered'
-	filtered = numpy.convolve(numpy.array(audioArray, "int64"), coeffs)[0:-ntaps+1]
-	filtered >>= 25
-	print "playing filtered audio"
-	# play filtered audio
-	play32bArray(filtered)

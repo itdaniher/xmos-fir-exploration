@@ -1,6 +1,6 @@
 demo howto:
 
-* run 'python fir_filter.py' to record a 10s audio clip, calculate a windowed sinc lowpass filter, use numpy's fast fortran convolution, and play the resulting stream via speakers
+* run 'python demo.py' to record a 10s audio clip, calculate a windowed sinc lowpass filter, use numpy's fast fortran convolution, and play the resulting stream via speakers
 
 dependencies:
 
